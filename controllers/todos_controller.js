@@ -43,6 +43,9 @@ router.get('/', (req, res) => {
   })
 })
 
+// test code
+// curl -XGET http://localhost:3000/todos
+
 // Show
 
 router.get('/:idx', (req, res) => {
@@ -55,6 +58,9 @@ router.get('/:idx', (req, res) => {
     }
   })
 })
+
+// test code
+// curl -XGET http://localhost:3000/todos/[CHOOSE AN ID NUMBER]
 
 // UPDATE
 
@@ -69,6 +75,9 @@ router.put('/:idx', (req, res) => {
   })
 })
 
+// test code
+// curl -XPUT -H "Content-Type: application/json" -d '{"name":"Buy Cheese Cake"}' http://localhost:3000/todos/[CHOOSE AN ID NUMBER]
+
 // DESTROY
 // Destroy a todo
 
@@ -82,6 +91,9 @@ router.delete('/:idx', (req, res) => {
     }
   })
 })
+
+// test code
+// curl -XDELETE http://localhost:3000/todos/[CHOOSE AN ID NUMBER]
 
 // // Destroy all todos
 //
