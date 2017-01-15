@@ -1,50 +1,99 @@
 const Todo = require('../models/todo')
+const express = require('express')
+const router = express.Router()
+const morgan = require('morgan')
+const bodyParser = require('body-parser')
 
-function create (params) {
-  Todo.create(params, function (err, todo) {
+router.use(bodyParser.json())
+router.use(bodyParser.urlencoded({ extended: true }))
+
+router.use(morgan('dev'))
+
+// CREATE
+
+router.post('/', (req, res) => {
+  Todo.create({
+    name: req.body.name,
+    description: req.body.description || req.body.name,
+    completed: req.body.completed || false
+  }, (err, newToDo) => {
     if (err) {
       console.log(err)
       return
+    } else {
+      res.json(newToDo)
     }
-    console.log(todo)
   })
-}
+})
 
-function list () {
-  Todo.find({}, function (err, todos) {
+// test code
+// curl -XPOST -H "Content-Type: application/json" -d '{"name":"Buy Cake","description":"you can never have too much"}' http://localhost:3000/todos
+
+// READ
+// List
+
+router.get('/', (req, res) => {
+  Todo.find({}, (err, itemsList) => {
     if (err) {
       console.log(err)
       return
+    } else {
+      res.json(itemsList)
     }
-    console.log(todos)
   })
-}
+})
 
-function show (id) {
-  Todo.findById(id, function (err, todo) {
-    if (err) return console.log(err)
-    console.log(todo)
+// Show
+
+router.get('/:idx', (req, res) => {
+  Todo.findById(req.params.idx, (err, item) => {
+    if (err) {
+      console.log(err)
+      return
+    } else {
+      res.json(item)
+    }
   })
-}
+})
 
-function update (id, params) {
-  Todo.findOneAndUpdate({ _id: id }, params, function (err, todo) {
-    if (err) console.log(err)
-    console.log(todo)
+// UPDATE
+
+router.put('/:idx', (req, res) => {
+  Todo.update({ _id: req.params.idx }, req.body, (err, data) => {
+    if (err) {
+      console.log(err)
+      return
+    } else {
+      res.json(data)
+    }
   })
-}
+})
 
-function destroy (id) {
-  Todo.findOneAndRemove({ _id: id }, function (err) {
-    if (err) console.log(err)
-    console.log('User deleted!')
+// DESTROY
+// Destroy a todo
+
+router.delete('/:idx', (req, res) => {
+  Todo.findOneAndRemove({ _id: req.params.idx }, (err) => {
+    if (err) {
+      console.log(err)
+      return
+    } else {
+      res.send('Deleted.')
+    }
   })
-}
+})
 
-module.exports = {
-  create,
-  list,
-  show,
-  update,
-  destroy
-}
+// // Destroy all todos
+//
+// router.delete('/', (req, res) => {
+//   Todo.remove({}, (err) => {
+//     if (err) {
+//       console.log(err)
+//       return
+//     } else {
+//       res.send('All deleted.')
+//     }
+//   })
+// })
+
+module.exports = router
